@@ -541,8 +541,11 @@ def plot_map():
                 return redirect(url_for('view_maps') + '?' + query_string)
 
         except Exception as e:
-            flash(f"An error occurred: {e}", 'error')
-            return render_template('error.html'), 500
+            err = traceback.format_exc()
+            print(err)
+            log_error(err)
+            flash(err, "error")
+            return render_template("error.html"), 500
 
     else:
         try:
