@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Financial Twin Result</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Financial Twin Result</h1>
+        <p class="text-center">The Financial Twin of <strong>{{ municipality }}</strong> using <strong>{{ method }}</strong> for year <strong>{{ year }}</strong> is: <strong>{{ result }}</strong></p>
+        <div class="text-center mt-4">
+            <!-- Link to the input page -->
+            <a href="/input" class="btn btn-primary">Go Back</a>
+        </div>
+    </div>
+</body>
+</html>

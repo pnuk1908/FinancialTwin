@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Financial Twin Map</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">Clusters of Similar Municipalities on the State's Map</h1>
+        <div class="text-center">
+            {% if plot_url %}
+                <img src="{{ plot_url }}" alt="Financial Twin Map" class="img-fluid">
+            {% endif %}
+        </div>
+        <div class="form-container mt-5">
+            <p class="form-description">Provide the necessary inputs and click the button below to generate the corresponding map:</p>
+            <form action="/plot_map" method="post">
+                <div class="form-group">
+                    <label for="financial_data_type">Financial Data Type:</label>
+                    <select id="financial_data_type" name="financial_data_type" class="form-control" required>
+                        <option value="Payins">Payins</option>
+                        <option value="Payouts">Payouts</option>
+                    </select>
+                </div>
+                <div class="form-group mt-3">
+                    <label for="year">Year:</label>
+                    <input type="number" id="year" name="year" class="form-control" value="2019" required>
+                </div>
+                <div class="form-group mt-3">
+                    <label for="num_clusters">Number of Clusters:</label>
+                    <input type="number" id="num_clusters" name="num_clusters" class="form-control" value="4" required>
+                </div>
+                <div class="form-group mt-3">
+                    <label for="include_population">Include population in the analysis:</label>
+                    <input type="checkbox" id="include_population" name="include_population" class="form-check-input" checked>
+                </div>
+                <button type="submit" class="btn btn-primary mt-4">Submit</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

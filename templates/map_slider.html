@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Slider</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        .carousel-item img {
+            width: 100%;
+            max-height: 800px; 
+            object-fit: contain;
+        }
+
+        /* Export Buttons Styling */
+        .export-buttons {
+            position: absolute;
+            top: 20px; /* Adjust vertical positioning */
+            left: 20px; /* Position to the left */
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .export-btn {
+            font-size: 0.8rem; /* Reduce text size */
+            padding: 5px 10px; /* Reduce padding */
+            width: 120px; /* Reduce button width */
+        }
+
+        /* Responsive Fix */
+        @media (max-width: 768px) {
+            .export-buttons {
+                position: static;
+                text-align: center;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <h2 class="text-center">Generated Maps</h2>
+
+        <!-- Export Buttons Container -->
+        <div class="export-buttons">
+            <a href="{{ url_for('export_maps') }}" class="btn btn-success export-btn">Export Maps</a>
+            <a href="{{ url_for('export_maps_data') }}" class="btn btn-info export-btn">Export Data</a>
+        </div>
+
+        <!-- Map Carousel -->
+        <div id="mapCarousel" class="carousel slide" data-ride="carousel">
+            <div class="carousel-inner">
+                {% for i, map in enumerate(maps) %}
+                <div class="carousel-item {% if i == 0 %}active{% endif %}">
+                    <img src="{{ url_for('static', filename=map) }}" alt="{{ years[i] }}">
+                    <div class="carousel-caption d-none d-md-block">
+                        <h5>{{ years[i] }}</h5>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <a class="carousel-control-prev" href="#mapCarousel" role="button" data-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="carousel-control-next" href="#mapCarousel" role="button" data-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+            <div class="text-center mt-4">
+                <a href="/plot_map" class="btn btn-primary">Go Back</a>
+            </div>
+        </div>
+    
+    <!-- Include jQuery and Bootstrap's JavaScript in the correct order -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.1/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Disable automatic sliding -->
+    <script>
+        $('#mapCarousel').carousel({
+            interval: false  // Disable auto-slide
+        });
+    </script>
+</body>
+</html>

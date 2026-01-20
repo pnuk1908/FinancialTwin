@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Analysis of Closest and Farthest Parameters</title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        #num_factors {
+            width: 60px;
+            display: inline-block;
+        }
+        .form-inline {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+        }
+        .results-section {
+            margin-top: 20px;
+        }
+        .table-container {
+            margin-top: 30px;
+        }
+        .table-title {
+            margin-bottom: 15px;
+        }
+        .details-table-container {
+            margin-top: 30px;
+        }
+        .difference-link {
+            color: #007bff;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .difference-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-md-9">
+                <h1 class="text-center mb-4">Analysis of Closest and Farthest Parameters</h1>
+                <h4 class="text-center mb-4">
+                    {{ municipality }} and its Financial Twin: {{ twin }} for year {{ year }} 
+                    {% if include_per_capita == 'Yes' %}
+                        (per capita)
+                    {% else %}
+                        (total)
+                    {% endif %}
+                </h4>
+            </div>
+            <div class="col-md-3 text-right">
+                <form method="POST" class="form-inline">
+                    <label for="num_factors">Top N hits:</label>
+                    <input type="number" name="num_factors" id="num_factors" class="form-control ml-2" min="1" max="10" value="{{ num_factors }}">
+                    <button type="submit" class="btn btn-primary ml-2">Apply</button>
+                </form>
+                    <a href="{{ url_for('download_excel') }}" class="btn btn-success">Export as Excel</a>
+            </div>
+        </div>
+
+        <!-- Results Section -->
+        <div class="results-section">
+            <div class="row">
+                <!-- Closest Factors Table -->
+                <div class="col-md-6 table-container">
+                    <h3 class="text-center table-title">Closest Parameters</h3>
+                    <table class="table table-striped table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Difference</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for factor, row in closest_factors.iterrows() %}
+                                <tr>
+                                    <td>{{ factor }}</td>
+                                    <td><a href="#" class="difference-link" data-factor="{{ factor }}" data-type="closest">{{ row['Difference'] }}</a></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Farthest Factors Table -->
+                <div class="col-md-6 table-container">
+                    <h3 class="text-center table-title">Farthest Parameters</h3>
+                    <table class="table table-striped table-bordered">
+                        <thead class="thead-dark">
+                            <tr>
+                                <th>Parameter</th>
+                                <th>Difference</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for factor, row in farthest_factors.iterrows() %}
+                                <tr>
+                                    <td>{{ factor }}</td>
+                                    <td><a href="#" class="difference-link" data-factor="{{ factor }}" data-type="farthest">{{ row['Difference'] }}</a></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Details Section -->
+        <div id="details-section" class="details-table-container" style="display: none;">
+            <h3 id="details-title" class="text-center">Details</h3>
+            <table class="table table-striped table-bordered">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Parameter</th>
+                        <th>{{ municipality }}</th>
+                        <th>{{ twin }}</th>
+                    </tr>
+                </thead>
+                <tbody id="details-body">
+                    <!-- Details will be populated here via JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Back to Home Button -->
+        <div class="text-center mt-4">
+            <a href="/?year={{ year }}&per_capita={{ include_per_capita }}" class="btn btn-primary">Back to Home</a>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $('.difference-link').click(function(event) {
+                event.preventDefault();
+                var factor = $(this).data('factor');
+                var type = $(this).data('type');
+
+                var detailsData = {
+                    'closest': {{ closest_factors.to_json(orient='index') | safe }},
+                    'farthest': {{ farthest_factors.to_json(orient='index') | safe }}
+                };
+
+                var factorData = detailsData[type][factor];
+
+                $('#details-title').text('Details for ' + factor);
+                $('#details-body').html(`
+                    <tr>
+                        <td>${factor}</td>
+                        <td>${factorData['Value_Municipality']}</td>
+                        <td>${factorData['Value_Twin']}</td>
+                    </tr>
+                `);
+                $('#details-section').show();
+            });
+        });
+    </script>
+</body>
+</html>
